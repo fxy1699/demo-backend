@@ -5,7 +5,7 @@ from werkzeug.utils import secure_filename
 import io
 import base64
 from utils.emotion_generator import generate_emotion
-from utils.emotion_other import emotion_analysis
+from utils.emotion_other import emotion_analysis, analyze_emotion_from_image
 from utils.text_analyzer import analyze_text
 from utils.prompt_manager import EMOTION_ANALYSIS_PROMPTS, get_system_prompt, get_emotion_prompt
 import logging
@@ -201,31 +201,52 @@ def init_llm():
 
 @app.route('/api/generate-emotion', methods=['POST'])
 def generate_emotion():
+    """
+    表情识别API - 分析上传图片中的表情
+    
+    请求:
+        - 图片文件: image_file
+        
+    响应:
+        - status: 处理状态 (success/error)
+        - emotion: 检测到的情绪 (happy/sad/angry/neutral)
+        - confidence: 置信度 (可选)
+        - all_emotions: 所有情绪的置信度 (可选)
+        - message: 错误信息 (仅在出错时)
+    """
+    # 检查是否有图片文件上传
     has_image = 'image_file' in request.files and request.files['image_file'].filename != ''
     
-    if has_image:
-        try:
-            frame = request.files['image_file']
-            file_bytes = frame.read()
-            np_arr = np.frombuffer(file_bytes, np.uint8)
-            image = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
-            results = DeepFace.analyze(image, actions=['emotion'], enforce_detection=False, detector_backend='opencv')
-            if results:
-                detected_emotion = results[0]['dominant_emotion']
-                return jsonify({
-                    'status': 'success',
-                    'emotion': detected_emotion
-                })
-                
-        except Exception as e:
-            logger.error(f"Error analyzing emotion: {str(e)}")
-            return jsonify({
-                'status': 'error',
-                'message': 'Failed to analyze emotion'
-            }), 500
+    if not has_image:
+        return jsonify({
+            'status': 'error',
+            'message': '没有提供图片文件',
+            'emotion': 'neutral'  # 默认情绪
+        }), 400
+    
+    try:
+        # 从请求中获取图片文件
+        image_file = request.files['image_file']
+        file_bytes = image_file.read()
         
- 
-dsd
+        # 导入表情分析函数
+        from utils.emotion_other import analyze_emotion_from_image
+        
+        # 分析图片中的表情
+        result = analyze_emotion_from_image(file_bytes)
+        
+        # 记录分析结果
+        logger.info(f"表情分析结果: {result['emotion']}, 状态: {result['status']}")
+        
+        return jsonify(result)
+    
+    except Exception as e:
+        logger.error(f"表情分析失败: {str(e)}")
+        return jsonify({
+            'status': 'error',
+            'message': f'表情分析失败: {str(e)}',
+            'emotion': 'neutral'  # 默认情绪
+        }), 500
 
 @app.route('/api/generate-multimodal', methods=['POST'])
 def generate_multimodal():
