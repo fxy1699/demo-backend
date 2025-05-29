@@ -4,6 +4,8 @@ Pillow==10.1.0
 gunicorn==20.1.0
 jieba==0.42.1
 python-dotenv==1.0.0
+opencv-python>=4.8.0
+deepface>=0.0.79
 
 # LLM相关依赖
 transformers>=4.39.0

@@ -5,6 +5,7 @@ from werkzeug.utils import secure_filename
 import io
 import base64
 from utils.emotion_generator import generate_emotion
+from utils.emotion_other import analyze_emotion_from_image
 from utils.text_analyzer import analyze_text
 from utils.prompt_manager import EMOTION_ANALYSIS_PROMPTS, get_system_prompt, get_emotion_prompt
 import logging
@@ -22,8 +23,10 @@ from utils.MinimaxTTS import (
 )
 from utils.clone_voice import upload_voice_file, clone_voice
 import requests
-
-# Add the current directory to the path to ensure absolute imports work
+import cv2
+import numpy as np
+from deepface import DeepFace
+# Add the current di   rectory to the path to ensure absolute imports work
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 # Import modules with absolute paths
@@ -207,6 +210,51 @@ def init_tts():
             logger.error(f"初始化TTS处理器失败: {str(e)}")
             return False
     return True
+@app.route('/api/generate-emotion', methods=['POST'])
+def generate_emotion():
+    """
+    表情识别API - 分析上传图片中的表情
+    
+    请求:
+        - 图片文件: image_file
+        
+    响应:
+        - status: 处理状态 (success/error)
+        - emotion: 检测到的情绪 (happy/sad/angry/neutral)
+        - confidence: 置信度 (可选)
+        - all_emotions: 所有情绪的置信度 (可选)
+        - message: 错误信息 (仅在出错时)
+    """
+    # 检查是否有图片文件上传
+    has_image = 'image_file' in request.files and request.files['image_file'].filename != ''
+    
+    if not has_image:
+        return jsonify({
+            'status': 'error',
+            'message': '没有提供图片文件',
+            'emotion': 'neutral'  # 默认情绪
+        }), 400
+    
+    try:
+        # 从请求中获取图片文件
+        image_file = request.files['image_file']
+        file_bytes = image_file.read()
+        
+        # 分析图片中的表情
+        result = analyze_emotion_from_image(file_bytes)
+        
+        # 记录分析结果
+        logger.info(f"表情分析结果: {result['emotion']}, 状态: {result['status']}")
+        
+        return jsonify(result)
+    
+    except Exception as e:
+        logger.error(f"表情分析失败: {str(e)}")
+        return jsonify({
+            'status': 'error',
+            'message': f'表情分析失败: {str(e)}',
+            'emotion': 'neutral'  # 默认情绪
+        }), 500
 
 @app.route('/api/generate-multimodal', methods=['POST'])
 def generate_multimodal():
