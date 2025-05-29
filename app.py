@@ -5,6 +5,7 @@ from werkzeug.utils import secure_filename
 import io
 import base64
 from utils.emotion_generator import generate_emotion
+from utils.emotion_other import emotion_analysis
 from utils.text_analyzer import analyze_text
 from utils.prompt_manager import EMOTION_ANALYSIS_PROMPTS, get_system_prompt, get_emotion_prompt
 import logging
@@ -16,8 +17,10 @@ from datetime import datetime
 import ssl
 import time
 from utils.ecot_handler import ECoTHandler
-
-# Add the current directory to the path to ensure absolute imports work
+import cv2
+import numpy as np
+from deepface import DeepFace
+# Add the current di   rectory to the path to ensure absolute imports work
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 # Import modules with absolute paths
@@ -195,6 +198,34 @@ def init_llm():
         except Exception as e:
             logger.error(f"初始化LLM处理器失败: {str(e)}")
     return False
+
+@app.route('/api/generate-emotion', methods=['POST'])
+def generate_emotion():
+    has_image = 'image_file' in request.files and request.files['image_file'].filename != ''
+    
+    if has_image:
+        try:
+            frame = request.files['image_file']
+            file_bytes = frame.read()
+            np_arr = np.frombuffer(file_bytes, np.uint8)
+            image = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
+            results = DeepFace.analyze(image, actions=['emotion'], enforce_detection=False, detector_backend='opencv')
+            if results:
+                detected_emotion = results[0]['dominant_emotion']
+                return jsonify({
+                    'status': 'success',
+                    'emotion': detected_emotion
+                })
+                
+        except Exception as e:
+            logger.error(f"Error analyzing emotion: {str(e)}")
+            return jsonify({
+                'status': 'error',
+                'message': 'Failed to analyze emotion'
+            }), 500
+        
+ 
+dsd
 
 @app.route('/api/generate-multimodal', methods=['POST'])
 def generate_multimodal():
