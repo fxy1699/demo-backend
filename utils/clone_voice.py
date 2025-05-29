@@ -6,8 +6,17 @@ import os
 group_id = "1913402932208866274"
 api_key = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJHcm91cE5hbWUiOiJTaGFuZyIsIlVzZXJOYW1lIjoiU2hhbmciLCJBY2NvdW50IjoiIiwiU3ViamVjdElEIjoiMTkxMzQwMjkzMjIxMzA2MDU3OCIsIlBob25lIjoiMTg4NTE2NzU0ODciLCJHcm91cElEIjoiMTkxMzQwMjkzMjIwODg2NjI3NCIsIlBhZ2VOYW1lIjoiIiwiTWFpbCI6IiIsIkNyZWF0ZVRpbWUiOiIyMDI1LTA1LTI5IDEyOjI0OjI1IiwiVG9rZW5UeXBlIjoxLCJpc3MiOiJtaW5pbWF4In0.Hvrq5qoWInpOshgsrGBWqD2MNZ41JKC7Cx-PUlpDxi5UQbYmN1uCgDj36CANoZK8v9-nQjoLb5jdPywH6J_P6H94uQluhEf-v0nWBa1NFCL5F5eaHYGjiUCyisl9o7qBcbgqJsKiCZkOXKZs8MnLjiptnQb1NxliPIs-7jflUNPvsELfWt8y3-dJGFayfDnvYvRwnpPyqn9rb7h3Qr18aiQ3jcND-SXFfou11hLBL5gvf9h5Ci1hhvKrWlOyVHQ8y2z3KlcfjR5umn4gI2Bcrr-XPYUl1xnOsSw0vKTivjpWcJCdfy5bJ0w-ZZI1T3wyhbsc2H3d26xy_HU_WjN0-w"
 
-# 音频文件路径
-voice_file_path = r"D:\backend\demo-backend\i.wav"
+# 使用相对路径获取音频文件路径
+def get_voice_file_path():
+    """获取语音样本文件的路径"""
+    # 获取当前脚本所在目录
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    # 获取项目根目录
+    project_root = os.path.dirname(current_dir)
+    # 语音文件路径（相对于项目根目录）
+    voice_file_path = os.path.join(project_root, "i.wav")
+    
+    return voice_file_path
 
 def upload_voice_file():
     """上传语音文件用于克隆"""
@@ -21,6 +30,9 @@ def upload_voice_file():
         data = {
             'purpose': 'voice_clone'
         }
+        
+        # 获取语音文件路径
+        voice_file_path = get_voice_file_path()
         
         if not os.path.exists(voice_file_path):
             print(f"错误：文件不存在 - {voice_file_path}")
