@@ -16,37 +16,18 @@ from datetime import datetime
 import ssl
 import time
 from utils.ecot_handler import ECoTHandler
+from utils.MinimaxTTS import (
+    text_to_speech_base64, text_to_speech_bytes,
+    text_to_speech_stream
+)
+from utils.clone_voice import upload_voice_file, clone_voice
+import requests
 
 # Add the current directory to the path to ensure absolute imports work
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 # Import modules with absolute paths
 from config.llm_config import get_llm_config, update_llm_config
-
-# Modified import statement, use MinimaxTTS module to replace Audio module
-from utils.MinimaxTTS import (
-    apply_tremolo, pitch_shift, apply_pitch_envelope, blend_with_parrot_chirp,
-    tts_real_parrot_play, text_to_speech_base64, text_to_speech_bytes,
-    adaptive_voice_clarity, join_audio, set_voice_file_path, text_to_speech_stream
-)
-
-# Set the path for the voice file to clone - using relative path to i.m4a file
-VOICE_SAMPLE_PATH = os.path.join('utils', 'audio_files', 'i.m4a')
-# Get the absolute path of the current file
-current_dir = os.path.dirname(os.path.abspath(__file__))
-# Build the complete path
-full_sample_path = os.path.join(current_dir, VOICE_SAMPLE_PATH)
-
-if os.path.exists(full_sample_path):
-    set_voice_file_path(full_sample_path)
-    print(f"Using voice sample file for cloning: {VOICE_SAMPLE_PATH}")
-else:
-    print(f"Warning: Voice sample file does not exist: {full_sample_path}")
-    # Try to use default voice sample
-    default_path = os.path.join(current_dir, 'utils', 'audio_files', 'new_parrot_chirp.wav')
-    if os.path.exists(default_path):
-        set_voice_file_path(default_path)
-        print(f"Using default voice sample file: new_parrot_chirp.wav")
 
 from pydub import AudioSegment, effects
 
@@ -181,6 +162,13 @@ def allowed_video_file(filename):
 llm_handler = None
 ecot_handler = None  # 添加ECoT处理器全局变量
 
+# 在全局变量部分添加
+tts_handler = None
+
+# 添加全局变量
+GROUP_ID = "1913402932208866274"
+API_KEY = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJHcm91cE5hbWUiOiJTaGFuZyIsIlVzZXJOYW1lIjoiU2hhbmciLCJBY2NvdW50IjoiIiwiU3ViamVjdElEIjoiMTkxMzQwMjkzMjIxMzA2MDU3OCIsIlBob25lIjoiMTg4NTE2NzU0ODciLCJHcm91cElEIjoiMTkxMzQwMjkzMjIwODg2NjI3NCIsIlBhZ2VOYW1lIjoiIiwiTWFpbCI6IiIsIkNyZWF0ZVRpbWUiOiIyMDI1LTA1LTI5IDEyOjI0OjI1IiwiVG9rZW5UeXBlIjoxLCJpc3MiOiJtaW5pbWF4In0.Hvrq5qoWInpOshgsrGBWqD2MNZ41JKC7Cx-PUlpDxi5UQbYmN1uCgDj36CANoZK8v9-nQjoLb5jdPywH6J_P6H94uQluhEf-v0nWBa1NFCL5F5eaHYGjiUCyisl9o7qBcbgqJsKiCZkOXKZs8MnLjiptnQb1NxliPIs-7jflUNPvsELfWt8y3-dJGFayfDnvYvRwnpPyqn9rb7h3Qr18aiQ3jcND-SXFfou11hLBL5gvf9h5Ci1hhvKrWlOyVHQ8y2z3KlcfjR5umn4gI2Bcrr-XPYUl1xnOsSw0vKTivjpWcJCdfy5bJ0w-ZZI1T3wyhbsc2H3d26xy_HU_WjN0-w"
+
 # 初始化
 def init_llm():
     """初始化LLM处理器"""
@@ -195,6 +183,30 @@ def init_llm():
         except Exception as e:
             logger.error(f"初始化LLM处理器失败: {str(e)}")
     return False
+
+def init_tts():
+    """初始化TTS处理器"""
+    global tts_handler
+    if tts_handler is None:
+        try:
+            api_key = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJHcm91cE5hbWUiOiJTaGFuZyIsIlVzZXJOYW1lIjoiU2hhbmciLCJBY2NvdW50IjoiIiwiU3ViamVjdElEIjoiMTkxMzQwMjkzMjIxMzA2MDU3OCIsIlBob25lIjoiMTg4NTE2NzU0ODciLCJHcm91cElEIjoiMTkxMzQwMjkzMjIwODg2NjI3NCIsIlBhZ2VOYW1lIjoiIiwiTWFpbCI6IiIsIkNyZWF0ZVRpbWUiOiIyMDI1LTA1LTI5IDEyOjI0OjI1IiwiVG9rZW5UeXBlIjoxLCJpc3MiOiJtaW5pbWF4In0.Hvrq5qoWInpOshgsrGBWqD2MNZ41JKC7Cx-PUlpDxi5UQbYmN1uCgDj36CANoZK8v9-nQjoLb5jdPywH6J_P6H94uQluhEf-v0nWBa1NFCL5F5eaHYGjiUCyisl9o7qBcbgqJsKiCZkOXKZs8MnLjiptnQb1NxliPIs-7jflUNPvsELfWt8y3-dJGFayfDnvYvRwnpPyqn9rb7h3Qr18aiQ3jcND-SXFfou11hLBL5gvf9h5Ci1hhvKrWlOyVHQ8y2z3KlcfjR5umn4gI2Bcrr-XPYUl1xnOsSw0vKTivjpWcJCdfy5bJ0w-ZZI1T3wyhbsc2H3d26xy_HU_WjN0-w"
+            group_id = "1913402932208866274"
+            tts_handler = MinimaxTTS(api_key, group_id)
+            
+            # 设置语音文件路径
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            voice_file = os.path.join(current_dir, "i.wav")
+            if os.path.exists(voice_file):
+                tts_handler.set_voice_file_path(voice_file)
+                # 执行语音克隆
+                voice_id = tts_handler.clone_voice()
+                logger.info(f"语音克隆成功，voice_id: {voice_id}")
+            else:
+                logger.error(f"语音文件不存在: {voice_file}")
+        except Exception as e:
+            logger.error(f"初始化TTS处理器失败: {str(e)}")
+            return False
+    return True
 
 @app.route('/api/generate-multimodal', methods=['POST'])
 def generate_multimodal():
@@ -432,10 +444,7 @@ def generate_multimodal():
                     try:
                         # Generate audio response with the modified text
                         print(f"生成音频响应，文本: '{text_response[:30]}...'，风格: {audio_style}")
-                        audio_base64 = text_to_speech_base64(
-                            text=text_response, 
-                            style=audio_style
-                        )
+                        audio_base64 = get_audio_response(text_response, audio_style)
                         if audio_base64:
                             logger.info(f"成功生成音频响应，大小: {len(audio_base64)} 字符，风格: {audio_style}")
                         else:
@@ -1061,18 +1070,59 @@ def stream_speech():
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
-# 修改现有的语音生成逻辑
+# 修改get_audio_response函数
 def get_audio_response(text, style):
-    """优化的音频响应生成函数，使用缓存和异步处理"""
+    """使用clone_voice.py的实现生成语音"""
     try:
-        # 生成音频响应
-        audio_base64 = text_to_speech_base64(
-            text=text, 
-            style=style
-        )
+        # 上传语音文件并获取file_id
+        file_id = upload_voice_file()
+        if not file_id:
+            raise Exception("语音文件上传失败")
+            
+        # 执行语音克隆
+        clone_result = clone_voice(file_id)
+        if not clone_result:
+            raise Exception("语音克隆失败")
+            
+        # 使用克隆的语音生成新的语音
+        url = f'https://api.minimax.chat/v1/text_to_speech?GroupId={GROUP_ID}'
+        headers = {
+            'Authorization': f'Bearer {API_KEY}',
+            'Content-Type': 'application/json'
+        }
+        
+        # 根据风格调整语音参数
+        speed = 1.0
+        if style == 'cartoon':
+            speed = 0.8
+        elif style == 'slow':
+            speed = 0.5
+        elif style == 'very_slow':
+            speed = 0.4
+        else:  # default
+            speed = 0.6
+            
+        payload = {
+            "text": text,
+            "voice_id": "ppooiudiiii",  # 使用克隆的voice_id
+            "model": "speech-01",
+            "speed": speed
+        }
+        
+        print(f"正在生成语音，文本: '{text[:30]}...'，风格: {style}")
+        response = requests.post(url, headers=headers, json=payload)
+        
+        if response.status_code != 200:
+            raise Exception(f"语音生成失败: {response.text}")
+            
+        # 将音频数据转换为base64
+        audio_base64 = base64.b64encode(response.content).decode('utf-8')
+        print(f"成功生成音频，大小: {len(audio_base64)} 字符")
         return audio_base64
+        
     except Exception as audio_error:
         logger.error(f"音频生成失败: {str(audio_error)}")
+        traceback.print_exc()
         return None
 
 # Setup Basic Authentication for public access

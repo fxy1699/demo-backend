@@ -5,14 +5,14 @@ import time
 import tempfile
 import os
 import base64
-from typing import Iterator, Optional
+from typing import Iterator, Optional, Dict, Any
 import pygame
 import requests
 import traceback
 
 # Minimax API配置
-GROUP_ID = '1914687288663609686'    # your_group_id
-API_KEY = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJHcm91cE5hbWUiOiJTaGFuZyBXYW5nIiwiVXNlck5hbWUiOiJTaGFuZyBXYW5nIiwiQWNjb3VudCI6IiIsIlN1YmplY3RJRCI6IjE5MTQ2ODcyODg2Njc4MDM5OTAiLCJQaG9uZSI6IiIsIkdyb3VwSUQiOiIxOTE0Njg3Mjg4NjYzNjA5Njg2IiwiUGFnZU5hbWUiOiIiLCJNYWlsIjoiMjQ2ODM1OTU1OEBxcS5jb20iLCJDcmVhdGVUaW1lIjoiMjAyNS0wNC0yMyAwMDoyNjo0MCIsIlRva2VuVHlwZSI6MSwiaXNzIjoibWluaW1heCJ9.ovfCL3yV07JQ1uadDhjVO6bdOlV1Y_kgCEaNA38cFrrPQa1wndNfpKsD7fYJH260e1GuvODcboX--ahd8XOYFvCTsaefrFAuZuuGKkRO_V6E9AkqfTMM4tVR0CHsioqzb3HXzv4EeJusq-LZAwD2uRs6AJ8OwRE6GkSRrMnbNYuk2RIfk8o4jMGTidZO9thPVuIlOO2yQIMP2bGzpSbaLdKt_8dZw25zyfS0t3bOozWAqcVbxhbDeDGl8sfi6Fm4hjXtKVd6-jUhdEGn6PQ4GraihkGiWde6Xj_7qLfa7frxksSgypILQl1dJl91vfxW-SwRD8UW_Ox8g9gFoKyuow'    # your_api_key
+GROUP_ID = '1913402932208866274'    # your_group_id
+API_KEY = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJHcm91cE5hbWUiOiJTaGFuZyIsIlVzZXJOYW1lIjoiU2hhbmciLCJBY2NvdW50IjoiIiwiU3ViamVjdElEIjoiMTkxMzQwMjkzMjIxMzA2MDU3OCIsIlBob25lIjoiMTg4NTE2NzU0ODciLCJHcm91cElEIjoiMTkxMzQwMjkzMjIwODg2NjI3NCIsIlBhZ2VOYW1lIjoiIiwiTWFpbCI6IiIsIkNyZWF0ZVRpbWUiOiIyMDI1LTA1LTI5IDEyOjI0OjI1IiwiVG9rZW5UeXBlIjoxLCJpc3MiOiJtaW5pbWF4In0.Hvrq5qoWInpOshgsrGBWqD2MNZ41JKC7Cx-PUlpDxi5UQbYmN1uCgDj36CANoZK8v9-nQjoLb5jdPywH6J_P6H94uQluhEf-v0nWBa1NFCL5F5eaHYGjiUCyisl9o7qBcbgqJsKiCZkOXKZs8MnLjiptnQb1NxliPIs-7jflUNPvsELfWt8y3-dJGFayfDnvYvRwnpPyqn9rb7h3Qr18aiQ3jcND-SXFfou11hLBL5gvf9h5Ci1hhvKrWlOyVHQ8y2z3KlcfjR5umn4gI2Bcrr-XPYUl1xnOsSw0vKTivjpWcJCdfy5bJ0w-ZZI1T3wyhbsc2H3d26xy_HU_WjN0-w'
 
 # 文件格式配置
 FILE_FORMAT = 'mp3'  # support mp3/pcm/flac
@@ -27,83 +27,106 @@ except:
 CLONED_VOICE_ID = None
 VOICE_FILE_PATH = None
 
-# 存储用于克隆的语音文件路径
-def set_voice_file_path(file_path):
-    global VOICE_FILE_PATH
-    VOICE_FILE_PATH = file_path
-    print(f"已设置语音文件路径: {VOICE_FILE_PATH}")
+class MinimaxTTS:
+    def __init__(self, api_key: str, group_id: str):
+        self.api_key = api_key
+        self.group_id = group_id
+        self.base_url = "https://api.minimax.chat/v1"
+        self.voice_file_path = None
+        self.cloned_voice_id = None
+        
+    def set_voice_file_path(self, file_path: str) -> None:
+        """设置用于克隆的语音文件路径"""
+        if not os.path.exists(file_path):
+            raise FileNotFoundError(f"语音文件不存在: {file_path}")
+        self.voice_file_path = file_path
+        
+    def clone_voice(self) -> str:
+        """克隆语音并返回voice_id"""
+        if not self.voice_file_path:
+            raise ValueError("请先设置语音文件路径")
+            
+        # 上传文件
+        upload_url = f"{self.base_url}/files/upload?GroupId={self.group_id}"
+        headers = {
+            'authority': 'api.minimax.chat',
+            'Authorization': f'Bearer {self.api_key}'
+        }
+        
+        data = {
+            'purpose': 'voice_clone'
+        }
+        
+        with open(self.voice_file_path, 'rb') as f:
+            files = {
+                'file': f
+            }
+            print("正在上传语音文件...")
+            response = requests.post(upload_url, headers=headers, data=data, files=files)
+            
+        if response.status_code != 200:
+            raise Exception(f"文件上传失败: {response.text}")
+            
+        result = response.json()
+        if "file" not in result:
+            raise Exception(f"上传响应异常: {result}")
+            
+        file_id = result["file"].get("file_id")
+        if not file_id:
+            raise Exception("未获取到file_id")
+            
+        # 执行克隆
+        clone_url = f"{self.base_url}/voice_clone?GroupId={self.group_id}"
+        unique_voice_id = f"voice_{int(time.time())}"
+        payload = json.dumps({
+            "file_id": file_id,
+            "voice_id": unique_voice_id
+        })
+        headers = {
+            'Authorization': f'Bearer {self.api_key}',
+            'content-type': 'application/json'
+        }
+        
+        print(f"正在执行语音克隆，使用voice_id: {unique_voice_id}...")
+        response = requests.post(clone_url, headers=headers, data=payload)
+        
+        if response.status_code != 200:
+            raise Exception(f"语音克隆失败: {response.text}")
+            
+        result = response.json()
+        print("克隆响应：", result)
+        
+        self.cloned_voice_id = unique_voice_id
+        return unique_voice_id
 
-# 语音克隆流程
-def clone_voice_from_file(file_path=None):
-    """执行语音克隆流程，返回克隆的voice_id"""
-    global CLONED_VOICE_ID, VOICE_FILE_PATH
-    
-    if file_path is None:
-        if VOICE_FILE_PATH is None:
-            # 使用默认示例音频文件
-            script_dir = os.path.dirname(os.path.abspath(__file__))
-            default_file = os.path.join(script_dir, "audio_files", "new_parrot_chirp.wav")
-            if os.path.exists(default_file):
-                file_path = default_file
-            else:
-                raise Exception("未设置语音文件且默认文件不存在，请使用set_voice_file_path设置语音文件")
-        else:
-            file_path = VOICE_FILE_PATH
-    
-    print(f"开始克隆语音，使用文件: {file_path}")
-    
-    # 上传文件
-    url = f'https://api.minimaxi.chat/v1/files/upload?GroupId={GROUP_ID}'
-    headers = {
-        'authority': 'api.minimaxi.chat',
-        'Authorization': f'Bearer {API_KEY}'
-    }
-    data = {
-        'purpose': 'voice_clone'
-    }
-    
-    with open(file_path, 'rb') as f:
-        files = {'file': f}
-        print("正在上传语音文件...")
-        response = requests.post(url, headers=headers, data=data, files=files)
-    
-    if response.status_code != 200:
-        raise Exception(f"上传语音文件失败: {response.text}")
-    
-    file_id = response.json().get("file", {}).get("file_id")
-    if not file_id:
-        raise Exception("未获取到文件ID")
-    
-    print(f"文件上传成功，文件ID: {file_id}")
-    
-    # 执行克隆
-    clone_url = f'https://api.minimaxi.chat/v1/voice_clone?GroupId={GROUP_ID}'
-    payload = json.dumps({
-        "file_id": file_id,
-        "voice_id": "ppooiudiii"  # 基础语音ID，会被克隆结果替换
-    })
-    clone_headers = {
-        'authorization': f'Bearer {API_KEY}',
-        'content-type': 'application/json'
-    }
-    
-    print("正在执行语音克隆...")
-    clone_response = requests.request("POST", clone_url, headers=clone_headers, data=payload)
-    
-    if clone_response.status_code != 200:
-        raise Exception(f"克隆语音失败: {clone_response.text}")
-    
-    # 获取克隆后的voice_id
-    clone_result = clone_response.json()
-    new_voice_id = clone_result.get("voice_id")
-    
-    if not new_voice_id:
-        raise Exception("未能获取克隆后的voice_id")
-    
-    print(f"语音克隆成功，新的voice_id: {new_voice_id}")
-    CLONED_VOICE_ID = new_voice_id
-    
-    return new_voice_id
+    def text_to_speech(self, text: str, output_path: str, voice_id: Optional[str] = None) -> None:
+        """将文本转换为语音"""
+        if not voice_id and not self.cloned_voice_id:
+            raise ValueError("请先克隆语音或提供voice_id")
+            
+        url = f"{self.base_url}/text_to_speech?GroupId={self.group_id}"
+        headers = {
+            'Authorization': f'Bearer {self.api_key}',
+            'Content-Type': 'application/json'
+        }
+        
+        payload = {
+            "text": text,
+            "voice_id": voice_id or self.cloned_voice_id,
+            "model": "speech-01",
+            "speed": 1.0
+        }
+        
+        print(f"正在生成语音，使用voice_id: {voice_id or self.cloned_voice_id}...")
+        response = requests.post(url, headers=headers, json=payload)
+        
+        if response.status_code != 200:
+            raise Exception(f"语音生成失败: {response.text}")
+            
+        # 保存音频文件
+        with open(output_path, 'wb') as f:
+            f.write(response.content)
+        print(f"语音已保存到: {output_path}")
 
 def get_voice_id():
     """获取当前使用的语音ID"""
@@ -408,4 +431,27 @@ if __name__ == "__main__":
         audio_file = tts_real_parrot_play(text)
         print(f"音频文件已保存至: {audio_file}")
     except Exception as e:
-        print(f"测试失败: {e}") 
+        print(f"测试失败: {e}")
+
+    # 使用新的MinimaxTTS类进行测试
+    try:
+        api_key = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJHcm91cE5hbWUiOiJTaGFuZyIsIlVzZXJOYW1lIjoiU2hhbmciLCJBY2NvdW50IjoiIiwiU3ViamVjdElEIjoiMTkxMzQwMjkzMjIxMzA2MDU3OCIsIlBob25lIjoiMTg4NTE2NzU0ODciLCJHcm91cElEIjoiMTkxMzQwMjkzMjIwODg2NjI3NCIsIlBhZ2VOYW1lIjoiIiwiTWFpbCI6IiIsIkNyZWF0ZVRpbWUiOiIyMDI1LTA1LTI5IDEyOjI0OjI1IiwiVG9rZW5UeXBlIjoxLCJpc3MiOiJtaW5pbWF4In0.Hvrq5qoWInpOshgsrGBWqD2MNZ41JKC7Cx-PUlpDxi5UQbYmN1uCgDj36CANoZK8v9-nQjoLb5jdPywH6J_P6H94uQluhEf-v0nWBa1NFCL5F5eaHYGjiUCyisl9o7qBcbgqJsKiCZkOXKZs8MnLjiptnQb1NxliPIs-7jflUNPvsELfWt8y3-dJGFayfDnvYvRwnpPyqn9rb7h3Qr18aiQ3jcND-SXFfou11hLBL5gvf9h5Ci1hhvKrWlOyVHQ8y2z3KlcfjR5umn4gI2Bcrr-XPYUl1xnOsSw0vKTivjpWcJCdfy5bJ0w-ZZI1T3wyhbsc2H3d26xy_HU_WjN0-w"
+        group_id = "1913402932208866274"
+        
+        tts = MinimaxTTS(api_key, group_id)
+        
+        # 设置语音文件路径
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        default_file = os.path.join(os.path.dirname(script_dir), "i.wav")
+        tts.set_voice_file_path(default_file)
+        
+        # 克隆语音
+        voice_id = tts.clone_voice()
+        print(f"语音克隆成功，voice_id: {voice_id}")
+        
+        # 使用克隆的语音生成文本
+        output_path = os.path.join(os.path.dirname(script_dir), "output.wav")
+        tts.text_to_speech("你好，这是一个测试。", output_path)
+        
+    except Exception as e:
+        print(f"测试失败: {str(e)}") 

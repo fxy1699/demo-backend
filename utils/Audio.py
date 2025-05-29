@@ -268,8 +268,8 @@ def upload_audio_for_voice_clone(audio_file_path):
     
     while retry_count <= max_retries:
         try:
-            group_id = '1914687288663609686'
-            api_key = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJHcm91cE5hbWUiOiJTaGFuZyBXYW5nIiwiVXNlck5hbWUiOiJTaGFuZyBXYW5nIiwiQWNjb3VudCI6IiIsIlN1YmplY3RJRCI6IjE5MTQ2ODcyODg2Njc4MDM5OTAiLCJQaG9uZSI6IiIsIkdyb3VwSUQiOiIxOTE0Njg3Mjg4NjYzNjA5Njg2IiwiUGFnZU5hbWUiOiIiLCJNYWlsIjoiMjQ2ODM1OTU1OEBxcS5jb20iLCJDcmVhdGVUaW1lIjoiMjAyNS0wNC0yMyAwMDoyNjo0MCIsIlRva2VuVHlwZSI6MSwiaXNzIjoibWluaW1heCJ9.ovfCL3yV07JQ1uadDhjVO6bdOlV1Y_kgCEaNA38cFrrPQa1wndNfpKsD7fYJH260e1GuvODcboX--ahd8XOYFvCTsaefrFAuZuuGKkRO_V6E9AkqfTMM4tVR0CHsioqzb3HXzv4EeJusq-LZAwD2uRs6AJ8OwRE6GkSRrMnbNYuk2RIfk8o4jMGTidZO9thPVuIlOO2yQIMP2bGzpSbaLdKt_8dZw25zyfS0t3bOozWAqcVbxhbDeDGl8sfi6Fm4hjXtKVd6-jUhdEGn6PQ4GraihkGiWde6Xj_7qLfa7frxksSgypILQl1dJl91vfxW-SwRD8UW_Ox8g9gFoKyuow'
+            group_id = '1913402932208866274'
+            api_key = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJHcm91cE5hbWUiOiJTaGFuZyIsIlVzZXJOYW1lIjoiU2hhbmciLCJBY2NvdW50IjoiIiwiU3ViamVjdElEIjoiMTkxMzQwMjkzMjIxMzA2MDU3OCIsIlBob25lIjoiMTg4NTE2NzU0ODciLCJHcm91cElEIjoiMTkxMzQwMjkzMjIwODg2NjI3NCIsIlBhZ2VOYW1lIjoiIiwiTWFpbCI6IiIsIkNyZWF0ZVRpbWUiOiIyMDI1LTA1LTI5IDEyOjI0OjI1IiwiVG9rZW5UeXBlIjoxLCJpc3MiOiJtaW5pbWF4In0.Hvrq5qoWInpOshgsrGBWqD2MNZ41JKC7Cx-PUlpDxi5UQbYmN1uCgDj36CANoZK8v9-nQjoLb5jdPywH6J_P6H94uQluhEf-v0nWBa1NFCL5F5eaHYGjiUCyisl9o7qBcbgqJsKiCZkOXKZs8MnLjiptnQb1NxliPIs-7jflUNPvsELfWt8y3-dJGFayfDnvYvRwnpPyqn9rb7h3Qr18aiQ3jcND-SXFfou11hLBL5gvf9h5Ci1hhvKrWlOyVHQ8y2z3KlcfjR5umn4gI2Bcrr-XPYUl1xnOsSw0vKTivjpWcJCdfy5bJ0w-ZZI1T3wyhbsc2H3d26xy_HU_WjN0-w'
             
             url = f'https://api.minimaxi.chat/v1/files/upload?GroupId={group_id}'
             headers = {
@@ -353,8 +353,8 @@ def clone_voice(file_id, voice_id="ppooiudiii"):
     
     while retry_count <= max_retries:
         try:
-            group_id = '1914687288663609686'
-            api_key = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJHcm91cE5hbWUiOiJTaGFuZyBXYW5nIiwiVXNlck5hbWUiOiJTaGFuZyBXYW5nIiwiQWNjb3VudCI6IiIsIlN1YmplY3RJRCI6IjE5MTQ2ODcyODg2Njc4MDM5OTAiLCJQaG9uZSI6IiIsIkdyb3VwSUQiOiIxOTE0Njg3Mjg4NjYzNjA5Njg2IiwiUGFnZU5hbWUiOiIiLCJNYWlsIjoiMjQ2ODM1OTU1OEBxcS5jb20iLCJDcmVhdGVUaW1lIjoiMjAyNS0wNC0yMyAwMDoyNjo0MCIsIlRva2VuVHlwZSI6MSwiaXNzIjoibWluaW1heCJ9.ovfCL3yV07JQ1uadDhjVO6bdOlV1Y_kgCEaNA38cFrrPQa1wndNfpKsD7fYJH260e1GuvODcboX--ahd8XOYFvCTsaefrFAuZuuGKkRO_V6E9AkqfTMM4tVR0CHsioqzb3HXzv4EeJusq-LZAwD2uRs6AJ8OwRE6GkSRrMnbNYuk2RIfk8o4jMGTidZO9thPVuIlOO2yQIMP2bGzpSbaLdKt_8dZw25zyfS0t3bOozWAqcVbxhbDeDGl8sfi6Fm4hjXtKVd6-jUhdEGn6PQ4GraihkGiWde6Xj_7qLfa7frxksSgypILQl1dJl91vfxW-SwRD8UW_Ox8g9gFoKyuow'
+            group_id = '1913402932208866274'
+            api_key = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJHcm91cE5hbWUiOiJTaGFuZyIsIlVzZXJOYW1lIjoiU2hhbmciLCJBY2NvdW50IjoiIiwiU3ViamVjdElEIjoiMTkxMzQwMjkzMjIxMzA2MDU3OCIsIlBob25lIjoiMTg4NTE2NzU0ODciLCJHcm91cElEIjoiMTkxMzQwMjkzMjIwODg2NjI3NCIsIlBhZ2VOYW1lIjoiIiwiTWFpbCI6IiIsIkNyZWF0ZVRpbWUiOiIyMDI1LTA1LTI5IDEyOjI0OjI1IiwiVG9rZW5UeXBlIjoxLCJpc3MiOiJtaW5pbWF4In0.Hvrq5qoWInpOshgsrGBWqD2MNZ41JKC7Cx-PUlpDxi5UQbYmN1uCgDj36CANoZK8v9-nQjoLb5jdPywH6J_P6H94uQluhEf-v0nWBa1NFCL5F5eaHYGjiUCyisl9o7qBcbgqJsKiCZkOXKZs8MnLjiptnQb1NxliPIs-7jflUNPvsELfWt8y3-dJGFayfDnvYvRwnpPyqn9rb7h3Qr18aiQ3jcND-SXFfou11hLBL5gvf9h5Ci1hhvKrWlOyVHQ8y2z3KlcfjR5umn4gI2Bcrr-XPYUl1xnOsSw0vKTivjpWcJCdfy5bJ0w-ZZI1T3wyhbsc2H3d26xy_HU_WjN0-w'
             
             url = f'https://api.minimaxi.chat/v1/voice_clone?GroupId={group_id}'
             payload = json.dumps({
@@ -415,7 +415,7 @@ def text_to_speech_base64(text, style='minimax', voice_id="ppooiudiii", custom_a
         text (str): 要转换的文本
         style (str): 语音风格，默认为 'minimax'，其他选项: 'cartoon'
         voice_id (str): Minimax的语音ID，默认为"ppooiudiii"
-        custom_audio_path (str): 用于语音克隆的音频文件路径
+        custom_audio_path (str): 用于语音克隆的音频文件路径，默认为"i.wav"
         speed (float): 语音速度，范围0.5-2.0
         volume (float): 语音音量，范围0.5-2.0
         pitch (int): 音调调整，范围-12到12
@@ -428,8 +428,8 @@ def text_to_speech_base64(text, style='minimax', voice_id="ppooiudiii", custom_a
         
         if style == 'minimax':
             # Minimax TTS API 配置
-            group_id = '1914687288663609686'
-            api_key = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJHcm91cE5hbWUiOiJTaGFuZyBXYW5nIiwiVXNlck5hbWUiOiJTaGFuZyBXYW5nIiwiQWNjb3VudCI6IiIsIlN1YmplY3RJRCI6IjE5MTQ2ODcyODg2Njc4MDM5OTAiLCJQaG9uZSI6IiIsIkdyb3VwSUQiOiIxOTE0Njg3Mjg4NjYzNjA5Njg2IiwiUGFnZU5hbWUiOiIiLCJNYWlsIjoiMjQ2ODM1OTU1OEBxcS5jb20iLCJDcmVhdGVUaW1lIjoiMjAyNS0wNC0yMyAwMDoyNjo0MCIsIlRva2VuVHlwZSI6MSwiaXNzIjoibWluaW1heCJ9.ovfCL3yV07JQ1uadDhjVO6bdOlV1Y_kgCEaNA38cFrrPQa1wndNfpKsD7fYJH260e1GuvODcboX--ahd8XOYFvCTsaefrFAuZuuGKkRO_V6E9AkqfTMM4tVR0CHsioqzb3HXzv4EeJusq-LZAwD2uRs6AJ8OwRE6GkSRrMnbNYuk2RIfk8o4jMGTidZO9thPVuIlOO2yQIMP2bGzpSbaLdKt_8dZw25zyfS0t3bOozWAqcVbxhbDeDGl8sfi6Fm4hjXtKVd6-jUhdEGn6PQ4GraihkGiWde6Xj_7qLfa7frxksSgypILQl1dJl91vfxW-SwRD8UW_Ox8g9gFoKyuow'
+            group_id = '1913402932208866274'
+            api_key = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJHcm91cE5hbWUiOiJTaGFuZyIsIlVzZXJOYW1lIjoiU2hhbmciLCJBY2NvdW50IjoiIiwiU3ViamVjdElEIjoiMTkxMzQwMjkzMjIxMzA2MDU3OCIsIlBob25lIjoiMTg4NTE2NzU0ODciLCJHcm91cElEIjoiMTkxMzQwMjkzMjIwODg2NjI3NCIsIlBhZ2VOYW1lIjoiIiwiTWFpbCI6IiIsIkNyZWF0ZVRpbWUiOiIyMDI1LTA1LTI5IDEyOjI0OjI1IiwiVG9rZW5UeXBlIjoxLCJpc3MiOiJtaW5pbWF4In0.Hvrq5qoWInpOshgsrGBWqD2MNZ41JKC7Cx-PUlpDxi5UQbYmN1uCgDj36CANoZK8v9-nQjoLb5jdPywH6J_P6H94uQluhEf-v0nWBa1NFCL5F5eaHYGjiUCyisl9o7qBcbgqJsKiCZkOXKZs8MnLjiptnQb1NxliPIs-7jflUNPvsELfWt8y3-dJGFayfDnvYvRwnpPyqn9rb7h3Qr18aiQ3jcND-SXFfou11hLBL5gvf9h5Ci1hhvKrWlOyVHQ8y2z3KlcfjR5umn4gI2Bcrr-XPYUl1xnOsSw0vKTivjpWcJCdfy5bJ0w-ZZI1T3wyhbsc2H3d26xy_HU_WjN0-w'
             url = f"https://api.minimaxi.chat/v1/t2a_v2?GroupId={group_id}"
             headers = {
                 'accept': 'application/json, text/plain, */*',
@@ -441,27 +441,27 @@ def text_to_speech_base64(text, style='minimax', voice_id="ppooiudiii", custom_a
             file_id = None
             clone_success = False
             
-            if custom_audio_path:
-                if not os.path.exists(custom_audio_path):
-                    logging.error(f"语音克隆音频文件不存在: {custom_audio_path}")
-                else:
-                    logging.info(f"找到音频文件用于克隆: {custom_audio_path}")
-                    # 上传音频文件
-                    file_id = upload_audio_for_voice_clone(custom_audio_path)
-                    
-                    if file_id:
-                        logging.info(f"文件上传成功，ID: {file_id}")
-                        # 进行语音克隆
-                        clone_success = clone_voice(file_id, voice_id)
-                        
-                        if clone_success:
-                            logging.info(f"语音克隆成功，将使用克隆后的音色: {voice_id}")
-                        else:
-                            logging.warning(f"语音克隆失败，将使用默认语音 {voice_id}")
-                    else:
-                        logging.error(f"文件上传失败，将使用默认语音")
+            if custom_audio_path is None:
+                custom_audio_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "i.wav")
+            
+            if not os.path.exists(custom_audio_path):
+                logging.error(f"语音克隆音频文件不存在: {custom_audio_path}")
             else:
-                logging.info("未提供音频文件路径，将使用默认语音")
+                logging.info(f"找到音频文件用于克隆: {custom_audio_path}")
+                # 上传音频文件
+                file_id = upload_audio_for_voice_clone(custom_audio_path)
+                
+                if file_id:
+                    logging.info(f"文件上传成功，ID: {file_id}")
+                    # 进行语音克隆
+                    clone_success = clone_voice(file_id, voice_id)
+                    
+                    if clone_success:
+                        logging.info(f"语音克隆成功，将使用克隆后的音色: {voice_id}")
+                    else:
+                        logging.warning(f"语音克隆失败，将使用默认语音 {voice_id}")
+                else:
+                    logging.error(f"文件上传失败，将使用默认语音")
             
             # 构建请求体
             body = json.dumps({
@@ -598,8 +598,8 @@ def get_minimax_tts_stream(text, voice_id="ppooiudiii", speed=1.0, volume=1.0, p
         Iterator[bytes]: 音频数据流
     """
     try:
-        group_id = '1914687288663609686'
-        api_key = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJHcm91cE5hbWUiOiJTaGFuZyBXYW5nIiwiVXNlck5hbWUiOiJTaGFuZyBXYW5nIiwiQWNjb3VudCI6IiIsIlN1YmplY3RJRCI6IjE5MTQ2ODcyODg2Njc4MDM5OTAiLCJQaG9uZSI6IiIsIkdyb3VwSUQiOiIxOTE0Njg3Mjg4NjYzNjA5Njg2IiwiUGFnZU5hbWUiOiIiLCJNYWlsIjoiMjQ2ODM1OTU1OEBxcS5jb20iLCJDcmVhdGVUaW1lIjoiMjAyNS0wNC0yMyAwMDoyNjo0MCIsIlRva2VuVHlwZSI6MSwiaXNzIjoibWluaW1heCJ9.ovfCL3yV07JQ1uadDhjVO6bdOlV1Y_kgCEaNA38cFrrPQa1wndNfpKsD7fYJH260e1GuvODcboX--ahd8XOYFvCTsaefrFAuZuuGKkRO_V6E9AkqfTMM4tVR0CHsioqzb3HXzv4EeJusq-LZAwD2uRs6AJ8OwRE6GkSRrMnbNYuk2RIfk8o4jMGTidZO9thPVuIlOO2yQIMP2bGzpSbaLdKt_8dZw25zyfS0t3bOozWAqcVbxhbDeDGl8sfi6Fm4hjXtKVd6-jUhdEGn6PQ4GraihkGiWde6Xj_7qLfa7frxksSgypILQl1dJl91vfxW-SwRD8UW_Ox8g9gFoKyuow'
+        group_id = '1913402932208866274'
+        api_key = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJHcm91cE5hbWUiOiJTaGFuZyIsIlVzZXJOYW1lIjoiU2hhbmciLCJBY2NvdW50IjoiIiwiU3ViamVjdElEIjoiMTkxMzQwMjkzMjIxMzA2MDU3OCIsIlBob25lIjoiMTg4NTE2NzU0ODciLCJHcm91cElEIjoiMTkxMzQwMjkzMjIwODg2NjI3NCIsIlBhZ2VOYW1lIjoiIiwiTWFpbCI6IiIsIkNyZWF0ZVRpbWUiOiIyMDI1LTA1LTI5IDEyOjI0OjI1IiwiVG9rZW5UeXBlIjoxLCJpc3MiOiJtaW5pbWF4In0.Hvrq5qoWInpOshgsrGBWqD2MNZ41JKC7Cx-PUlpDxi5UQbYmN1uCgDj36CANoZK8v9-nQjoLb5jdPywH6J_P6H94uQluhEf-v0nWBa1NFCL5F5eaHYGjiUCyisl9o7qBcbgqJsKiCZkOXKZs8MnLjiptnQb1NxliPIs-7jflUNPvsELfWt8y3-dJGFayfDnvYvRwnpPyqn9rb7h3Qr18aiQ3jcND-SXFfou11hLBL5gvf9h5Ci1hhvKrWlOyVHQ8y2z3KlcfjR5umn4gI2Bcrr-XPYUl1xnOsSw0vKTivjpWcJCdfy5bJ0w-ZZI1T3wyhbsc2H3d26xy_HU_WjN0-w'
         url = f"https://api.minimaxi.chat/v1/t2a_v2?GroupId={group_id}"
         
         headers = {
