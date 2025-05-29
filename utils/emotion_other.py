@@ -37,6 +37,12 @@ def analyze_emotion_from_image(image_data):
             detected_emotion = results[0]['dominant_emotion']
             emotion_scores = results[0]['emotion']
             
+            # 将NumPy数据类型转换为Python原生类型
+            emotion_scores_dict = {}
+            for emotion, score in emotion_scores.items():
+                # 将np.float32转换为Python float
+                emotion_scores_dict[emotion] = float(score)
+            
             # 将情绪映射为前端可接受的类型
             mapped_emotion = map_emotion_to_frontend(detected_emotion)
             
@@ -44,8 +50,8 @@ def analyze_emotion_from_image(image_data):
                 'status': 'success',
                 'emotion': mapped_emotion,
                 'original_emotion': detected_emotion,
-                'confidence': emotion_scores[detected_emotion],
-                'all_emotions': emotion_scores
+                'confidence': float(emotion_scores[detected_emotion]),
+                'all_emotions': emotion_scores_dict
             }
         else:
             return {
