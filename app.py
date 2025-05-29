@@ -5,7 +5,7 @@ from werkzeug.utils import secure_filename
 import io
 import base64
 from utils.emotion_generator import generate_emotion
-from utils.emotion_other import emotion_analysis, analyze_emotion_from_image
+from utils.emotion_other import analyze_emotion_from_image
 from utils.text_analyzer import analyze_text
 from utils.prompt_manager import EMOTION_ANALYSIS_PROMPTS, get_system_prompt, get_emotion_prompt
 import logging
@@ -228,9 +228,6 @@ def generate_emotion():
         # 从请求中获取图片文件
         image_file = request.files['image_file']
         file_bytes = image_file.read()
-        
-        # 导入表情分析函数
-        from utils.emotion_other import analyze_emotion_from_image
         
         # 分析图片中的表情
         result = analyze_emotion_from_image(file_bytes)
